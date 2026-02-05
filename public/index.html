@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web sockets</title>
+</head>
+<body>
+    <h1>Messages(are live)</h1>
+    <input id="username" placeholder="first choose your username">
+    <p id="displayName">Hello new user, you haven't entered a username yet</p>
+    <input id="msg" placeholder="Type a message">
+    <ul id="messages"></ul>
+
+    <script>
+        let userName = null;
+        username.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                displayName.textContent = "Hello " + username.value;
+                userName = username.value;
+                username.value = "";
+            }
+        });
+        const socket = new WebSocket(location.origin.replace("http", "ws"));
+
+        socket.onmessage = (event) => {
+            const li = document.createElement('li');
+            li.textContent = event.data;
+            messages.appendChild(li);
+        };
+
+        msg.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                if (!userName) {
+                    alert("please enter a username first");
+                    return ;
+                }
+                console.log(userName)
+                socket.send(`${userName}: ${msg.value}`);
+                msg.value = "";
+            }
+        });
+    </script>
+</body>
+</html>
